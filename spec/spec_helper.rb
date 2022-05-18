@@ -1,4 +1,4 @@
-require 'lib/braze_sentry'
+# frozen_string_literal: true
 
-RSpec.configure do |c|
-end
+require 'braze_sentry'
+require 'dummy/config/environment'

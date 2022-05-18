@@ -1,0 +1,60 @@
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - spec/dummy/**/*
+
+Gemspec/RequireMFA:
+  Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
+
+Layout/SpaceInsideBlockBraces:
+  EnforcedStyle: space
+
+Metrics/MethodLength:
+  Max: 40
+
+Metrics/ParameterLists:
+  Max: 11
+
+Metrics/AbcSize:
+  Max: 40
+
+Metrics/CyclomaticComplexity:
+  Max: 20
+
+Metrics/PerceivedComplexity:
+  Max: 20
+
+Metrics/ClassLength:
+  Max: 200
+
+Layout/LineLength:
+  Max: 200
+
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Metrics/BlockLength:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - spec/**/*
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - spec/**/*
