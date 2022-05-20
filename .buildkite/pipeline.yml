@@ -1,0 +1,84 @@
+---
+backstop_timeout: &backstop_timeout
+  # buildkite does not (yet) support a pipeline global timeout
+  # https://github.com/buildkite/feedback/issues/170
+  timeout_in_minutes: 30
+
+env:
+  RUBY_IMAGE: "artifactory.infra.braze.com/docker-virtual/ruby:2.7.3"
+
+steps:
+  - label: ":rspec: Tests"
+    <<: *backstop_timeout
+    agents:
+      queue: "arm64"
+    commands: |
+      # we use an old version of bundler
+      gem install bundler:1.17.3
+      bundle config force_ruby_platform true
+      bundle install
+      bundle exec rspec
+    plugins:
+      - docker#v3.13.0:
+          image: ${RUBY_IMAGE}
+
+  - label: ":rubocop: Formatting"
+    <<: *backstop_timeout
+    agents:
+      queue: "arm64"
+    commands: |
+      # we use an old version of bundler
+      gem install bundler:1.17.3
+      bundle config force_ruby_platform true
+      bundle install
+      bundle exec rubocop
+    plugins:
+      - docker#v3.13.0:
+          image: ${RUBY_IMAGE}
+
+  # steps below here require a person to manually click in the Buildkite UI
+  - block: "Release gem"
+    branches: "main PLATI-291-buildkite-pipeline"
+    prompt: "Add optional description"
+    fields:
+      - text: "Description"
+        key: "release-description"
+        required: false
+
+  - label: ":gem: Build and push gem to artifactory"
+    <<: *backstop_timeout
+    branches: "main PLATI-291-buildkite-pipeline"
+    agents:
+      queue: "arm64"
+    commands: |
+      # we use an old version of bundler
+      gem install bundler:1.17.3
+      bundle config force_ruby_platform true
+      bundle install
+
+      git config --global user.email "appboyci@braze.com"
+      git config --global user.name "Appboy CI"
+      mkdir -p ~/.gem && touch ~/.gem/credentials && chmod 0600 ~/.gem/credentials
+      curl -u"\$ARTIFACTORY_USERNAME:\$ARTIFACTORY_PASSWORD" \
+        https://artifactory.infra.braze.com/artifactory/api/gems/braze-gems-local/api/v1/api_key.yaml \
+        --fail \
+        -s > ~/.gem/credentials
+
+      mkdir -p ~/.ssh
+      ssh-keyscan -t ECDSA github.com >> ~/.ssh/known_hosts
+
+      gem release \
+        --host https://artifactory.infra.braze.com/artifactory/api/gems/braze-gems-local \
+        --tag \
+        --push \
+        --github \
+        --token "\$GITHUB_API_TOKEN" \
+        --description "$(buildkite-agent meta-data get release-description ||:)"
+    plugins:
+      - docker#v3.13.0:
+          image: ${RUBY_IMAGE}
+          mount-ssh-agent: true
+          environment:
+            - ARTIFACTORY_USERNAME
+            - ARTIFACTORY_PASSWORD
+            - GITHUB_API_TOKEN
