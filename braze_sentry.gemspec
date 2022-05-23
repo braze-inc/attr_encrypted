@@ -21,9 +21,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'gem-release'
   s.add_dependency 'mongo'
   s.add_dependency 'rails'
-  s.add_dependency 'sentry-rails', '5.3.0'
+  s.add_dependency 'sentry-rails', '5.3.1'
   s.add_dependency 'sentry-ruby', '5.3.1'
-  s.add_dependency 'sentry-sidekiq', '5.3.0'
+  s.add_dependency 'sentry-sidekiq', '5.3.1'
 
   s.add_development_dependency 'byebug'
   s.add_development_dependency 'rspec'
