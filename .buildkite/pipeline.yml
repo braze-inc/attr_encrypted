@@ -6,6 +6,7 @@ backstop_timeout: &backstop_timeout
 
 env:
   RUBY_IMAGE: "artifactory.infra.braze.com/docker-virtual/ruby:2.7.3"
+  RUBY3_IMAGE: "artifactory.infra.braze.com/docker-virtual/ruby:3.0.4"
 
 steps:
   - label: ":rspec: Tests"
@@ -21,6 +22,20 @@ steps:
     plugins:
       - docker#v3.13.0:
           image: ${RUBY_IMAGE}
+
+  - label: ":rspec: Ruby3 Tests"
+    <<: *backstop_timeout
+    agents:
+      queue: "arm64"
+    commands: |
+      # we use an old version of bundler
+      gem install bundler:1.17.3
+      bundle config force_ruby_platform true
+      bundle install
+      bundle exec rspec
+    plugins:
+      - docker#v3.13.0:
+          image: ${RUBY3_IMAGE}
 
   - label: ":rubocop: Formatting"
     <<: *backstop_timeout
