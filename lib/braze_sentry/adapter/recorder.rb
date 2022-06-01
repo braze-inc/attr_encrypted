@@ -63,7 +63,7 @@ module BrazeSentry
           return
         end
 
-        @hub.capture_exception(exception, options)
+        @hub.capture_exception(exception, **options)
       end
 
       # @param message [String] the message to log to Sentry
@@ -98,7 +98,7 @@ module BrazeSentry
 
         options = enhance_options_extras_to_tags(options)
 
-        @hub.capture_message(message, options)
+        @hub.capture_message(message, **options)
       end
       # rubocop:enable Style/OptionalBooleanParameter
 
