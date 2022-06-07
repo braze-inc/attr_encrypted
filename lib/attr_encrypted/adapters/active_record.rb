@@ -56,9 +56,11 @@ if defined?(ActiveRecord::Base)
             attribute attr if ::ActiveRecord::VERSION::STRING >= "5.1.0"
             options.merge! attr_encrypted_encrypted_attributes[attr]
 
-            define_method("#{attr}_was") do
-              attribute_was(attr)
-            end
+            # attribute_was does not work with the way attribute_will_change! is being used
+            #
+            #define_method("#{attr}_was") do
+            #  attribute_was(attr)
+            #end
 
             if ::ActiveRecord::VERSION::STRING >= "4.1"
               define_method("#{attr}_changed?") do |options = {}|
