@@ -22,6 +22,7 @@ module BrazeSentry
     EMAIL_COMPOSITION = 'email_composition'
     EMAIL_INFRASTRUCTURE = 'email_infrastructure'
     IAM = 'iam'
+    IN_MEMORY_DB = 'in_memory_db'
     INGESTION = 'ingestion'
     INTELLIGENCE = 'intelligence'
     INTERNAL_TOOLS = 'internal_tools'
